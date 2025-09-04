@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دخول إلى Gemini AI</title>
+    <title>AssistantAI - مساعد الذكاء الاصطناعي</title>
+    <meta name="description" content="أقوى مساعد ذكي عربي لحل جميع مشاكلك">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    
     <style>
         * {
             margin: 0;
@@ -13,253 +16,408 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background: #0a0a0a;
+            color: white;
+            overflow: hidden;
+        }
+        
+        /* شريط علوي مخصص */
+        .top-bar {
+            background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 8px 20px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+        
+        .app-logo .icon {
+            font-size: 20px;
+            background: linear-gradient(45deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #10b981;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .app-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .control-btn:hover {
+            background: #333;
+            color: white;
+        }
+        
+        /* حاوي التطبيق الرئيسي */
+        .app-container {
+            height: calc(100vh - 45px);
+            position: relative;
+            background: #111;
+        }
+        
+        /* إخفاء iframe بحدود مخصصة */
+        .iframe-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #111;
+            transform: scale(1);
+            transform-origin: top left;
+        }
+        
+        /* طبقة تحميل مخصصة */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            z-index: 999;
+            transition: opacity 0.5s ease;
         }
         
-        .container {
+        .loading-content {
             text-align: center;
-            background: white;
-            padding: 60px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            max-width: 500px;
-            width: 90%;
         }
         
-        .logo {
-            font-size: 80px;
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #333;
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 30px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.2rem;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .loading-subtext {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            width: 300px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #7c3aed);
+            border-radius: 2px;
+            width: 0%;
+            animation: loading-progress 3s ease-out forwards;
+        }
+        
+        @keyframes loading-progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        /* رسالة خطأ مخصصة */
+        .error-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a0f0f 0%, #2d1414 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 998;
+        }
+        
+        .error-content {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .error-icon {
+            font-size: 48px;
+            color: #ef4444;
             margin-bottom: 20px;
         }
         
-        h1 {
-            color: #333;
-            font-size: 2.5rem;
+        .error-title {
+            font-size: 1.4rem;
+            color: #ef4444;
             margin-bottom: 15px;
-            font-weight: 600;
         }
         
-        .subtitle {
-            color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 40px;
+        .error-message {
+            color: #ccc;
             line-height: 1.5;
+            margin-bottom: 25px;
         }
         
-        .btn-container {
-            margin: 30px 0;
-        }
-        
-        .main-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 18px 40px;
+        .retry-btn {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
             border: none;
-            border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .main-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-        }
-        
-        .secondary-btn {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .secondary-btn:hover {
-            background: #667eea;
             color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+        
+        .retry-btn:hover {
             transform: translateY(-2px);
         }
         
-        .features {
-            margin-top: 40px;
-            text-align: right;
+        /* إخفاء عناصر غير مرغوب فيها */
+        iframe[src*="google"] {
+            filter: contrast(1.1) brightness(0.95);
         }
         
-        .feature {
-            display: flex;
-            align-items: center;
-            margin: 15px 0;
-            color: #555;
-        }
-        
-        .feature-icon {
-            background: #f8f9ff;
-            color: #667eea;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 15px;
-            font-size: 18px;
-        }
-        
-        .countdown {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 30px 0;
-        }
-        
-        .countdown-text {
-            color: #667eea;
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-        
-        .countdown-timer {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #333;
-            font-family: 'Courier New', monospace;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 40px 20px;
+        /* استجابة للجوال */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 6px 15px;
             }
             
-            h1 {
-                font-size: 2rem;
+            .app-logo {
+                font-size: 14px;
             }
             
-            .logo {
-                font-size: 60px;
+            .control-btn {
+                padding: 3px 6px;
+                font-size: 10px;
             }
             
-            .main-btn {
-                padding: 15px 30px;
-                font-size: 1.2rem;
+            .progress-bar {
+                width: 250px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">🤖</div>
-        <h1>مرحباً بك في Gemini AI</h1>
-        <p class="subtitle">
-            أفضل تطبيق للذكاء الاصطناعي من Google<br>
-            جاهز لمساعدتك في جميع مهامك
-        </p>
-        
-        <div class="countdown">
-            <div class="countdown-text">سيتم التوجيه تلقائياً خلال:</div>
-            <div class="countdown-timer" id="countdown">5</div>
+    <!-- شريط علوي مخصص -->
+    <div class="top-bar">
+        <div class="app-logo">
+            <span class="icon">⚡</span>
+            <span>AssistantAI Pro</span>
         </div>
         
-        <div class="btn-container">
-            <a href="https://aistudio.google.com" class="main-btn" id="mainBtn">
-                🚀 ادخل الآن إلى Gemini
-            </a>
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>متصل</span>
         </div>
         
-        <a href="#" class="secondary-btn" onclick="stopRedirect()">
-            ⏸ إيقاف العد التنازلي
-        </a>
+        <div class="app-controls">
+            <button class="control-btn" onclick="refreshApp()">🔄</button>
+            <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
+        </div>
+    </div>
+    
+    <!-- التطبيق الرئيسي -->
+    <div class="app-container">
+        <!-- طبقة التحميل -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">جاري تحميل المساعد الذكي...</div>
+                <div class="loading-subtext">يرجى الانتظار بينما نهيئ تجربتك المخصصة</div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
         
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">💬</div>
-                <span>محادثات ذكية ومتطورة</span>
+        <!-- طبقة الخطأ -->
+        <div class="error-overlay" id="errorOverlay">
+            <div class="error-content">
+                <div class="error-icon">⚠</div>
+                <div class="error-title">فشل في الاتصال</div>
+                <div class="error-message">
+                    عذراً، حدث خطأ في تحميل المساعد الذكي.<br>
+                    يرجى المحاولة مرة أخرى أو التحقق من اتصال الإنترنت.
+                </div>
+                <button class="retry-btn" onclick="retryConnection()">المحاولة مرة أخرى</button>
             </div>
-            <div class="feature">
-                <div class="feature-icon">🎨</div>
-                <span>إنشاء المحتوى والصور</span>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📊</div>
-                <span>تحليل البيانات والمستندات</span>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🔒</div>
-                <span>آمن ومحمي بالكامل</span>
-            </div>
+        </div>
+        
+        <!-- الإطار المخفي -->
+        <div class="iframe-wrapper">
+            <iframe 
+                id="mainFrame"
+                src=""
+                title="AI Assistant"
+                allow="camera; microphone; clipboard-read; clipboard-write"
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation allow-modals">
+            </iframe>
         </div>
     </div>
 
     <script>
-        let countdown = 5;
-        let redirectTimer;
-        let countdownElement = document.getElementById('countdown');
-        let isRedirectActive = true;
+        // URLs متعددة للاحتياطي
+        const proxyUrls = [
+            'https://corsproxy.io/?https://aistudio.google.com/apps/drive/1-OfObRv07pzeMXjN2qIOczN1TgNftCKP?showPreview=true',
+            'https://cors-anywhere.herokuapp.com/https://aistudio.google.com/apps/drive/1-OfObRv07pzeMXjN2qIOczN1TgNftCKP?showPreview=true',
+            'https://proxy.cors.sh/https://aistudio.google.com/apps/drive/1-OfObRv07pzeMXjN2qIOczN1TgNftCKP?showPreview=true'
+        ];
         
-        function updateCountdown() {
-            if (!isRedirectActive) return;
+        let currentProxyIndex = 0;
+        const iframe = document.getElementById('mainFrame');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorOverlay = document.getElementById('errorOverlay');
+        
+        function loadApp() {
+            // إظهار شاشة التحميل
+            loadingOverlay.style.display = 'flex';
+            errorOverlay.style.display = 'none';
             
-            countdownElement.textContent = countdown;
+            // محاولة تحميل التطبيق
+            iframe.src = proxyUrls[currentProxyIndex];
             
-            if (countdown <= 0) {
-                window.open('https://aistudio.google.com', '_blank');
-                countdownElement.textContent = "تم التوجيه!";
-                document.querySelector('.countdown-text').textContent = "تم فتح Gemini في نافذة جديدة";
-                clearInterval(redirectTimer);
-                return;
+            // إخفاء التحميل بعد فترة
+            setTimeout(() => {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            }, 3500);
+        }
+        
+        function retryConnection() {
+            currentProxyIndex = (currentProxyIndex + 1) % proxyUrls.length;
+            loadApp();
+        }
+        
+        function refreshApp() {
+            iframe.src = iframe.src;
+        }
+        
+        function toggleFullscreen() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen();
             }
-            
-            countdown--;
         }
         
-        function stopRedirect() {
-            isRedirectActive = false;
-            clearInterval(redirectTimer);
-            countdownElement.textContent = "متوقف";
-            document.querySelector('.countdown-text').textContent = "تم إيقاف التوجيه التلقائي";
-            document.querySelector('.secondary-btn').style.display = 'none';
-        }
+        // معالجة أخطاء التحميل
+        iframe.addEventListener('error', function() {
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                errorOverlay.style.display = 'flex';
+            }, 1000);
+        });
         
-        // بدء العد التنازلي
-        redirectTimer = setInterval(updateCountdown, 1000);
-        updateCountdown();
+        // إخفاء عناصر التحميل عند نجاح التحميل
+        iframe.addEventListener('load', function() {
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 2000);
+        });
         
-        // إضافة حدث للزر الرئيسي
-        document.getElementById('mainBtn').addEventListener('click', function(e) {
+        // بدء التطبيق
+        window.addEventListener('load', function() {
+            setTimeout(loadApp, 500);
+        });
+        
+        // منع النقر بالزر الأيمن للحماية
+        document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            window.open('https://aistudio.google.com', '_blank');
         });
         
-        // تأثيرات بصرية
-        document.addEventListener('mousemove', function(e) {
-            const container = document.querySelector('.container');
-            const rect = container.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            const rotateX = y / 10;
-            const rotateY = -x / 10;
-            
-            container.style.transform = perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg);
+        // منع فتح أدوات المطور
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
         });
         
-        document.addEventListener('mouseleave', function() {
-            document.querySelector('.container').style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-        });
+        // تحديث حالة الاتصال
+        setInterval(() => {
+            const statusDot = document.querySelector('.status-dot');
+            const statusText = document.querySelector('.status-indicator span');
+            
+            if (navigator.onLine) {
+                statusDot.style.background = '#10b981';
+                statusText.textContent = 'متصل';
+            } else {
+                statusDot.style.background = '#ef4444';
+                statusText.textContent = 'منقطع';
+            }
+        }, 1000);
     </script>
 </body>
 </html>
