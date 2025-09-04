@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقعي - تطبيق Gemini</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        /* هيدر اختياري */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        /* حاوي الـ iframe */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 70px); /* نقص ارتفاع الهيدر */
+            overflow: hidden;
+        }
+        
+        /* بدون هيدر - ملء الشاشة بالكامل */
+        .fullscreen .iframe-container {
+            height: 100vh;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        
+        /* رسالة تحميل */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            z-index: 1;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- يمكنك حذف الهيدر إذا كنت تريد ملء الشاشة بالكامل -->
+    <div class="header">
+        <h1>تطبيق Gemini AI</h1>
+    </div>
+    
+    <div class="iframe-container">
+        <!-- ضع رابط صفحة Gemini Studio هنا -->
+        <iframe src="https://aistudio.google.com/apps/drive/1-OfObRv07pzeMXjN2qIOczN1TgNftCKP?showPreview=true"
+                title="Gemini Studio Application"
+                allowfullscreen>
+            متصفحك لا يدعم عرض الإطارات المضمنة. 
+            <a href="https://aistudio.google.com/apps/drive/1-OfObRv07pzeMXjN2qIOczN1TgNftCKP?showPreview=true">اضغط هنا لفتح التطبيق</a>
+        </iframe>
+        
+        <!-- رسالة تحميل -->
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>جاري تحميل التطبيق...</p>
+        </div>
+    </div>
+
+    <script>
+        // إخفاء رسالة التحميل عند تحميل الإطار
+        document.querySelector('iframe').addEventListener('load', function() {
+            document.querySelector('.loading').style.display = 'none';
+        });
+        
+        // للتبديل لوضع ملء الشاشة (اختياري)
+        function toggleFullscreen() {
+            document.body.classList.toggle('fullscreen');
+        }
+        
+        // التعامل مع أخطاء التحميل
+        document.querySelector('iframe').addEventListener('error', function() {
+            document.querySelector('.loading p').innerHTML = 'حدث خطأ في تحميل التطبيق. <a href="https://aistudio.google.com/apps/drive/1-OfObRv07pzeMXjN2qIOczN1TgNftCKP?showPreview=true">جرب فتحه مباشرة</a>';
+        });
+    </script>
+</body>
+</html>
