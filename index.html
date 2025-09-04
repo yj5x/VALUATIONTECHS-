@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALUATION TECHS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@^0.15.0",
+          "xlsx": "https://esm.sh/xlsx@^0.18.5"
+        }
+      }
+    </script>
+    <script type="module" src="index.tsx"></script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+
+<!-- AUTHENTICATION VIEW -->
+<div id="auth-view" class="auth-container">
+    <div class="auth-content">
+        <div class="logo-standalone">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" fill="#0d6efd" />
+                <path d="M12 2L22 7V17L12 22" fill="#0b5ed7" />
+                <path d="M12 12.5L22 7L12 2L2 7L12 12.5Z" fill="white" fill-opacity="0.5"/>
+                <path d="M2 7V17L12 22V12.5L2 7Z" fill="white" fill-opacity="0.2"/>
+            </svg>
+            <h1>VALUATION TECHS</h1>
+        </div>
+        <div class="card login-card">
+            <p class="card-title">تسجيل الدخول</p>
+            <p class="card-subtitle">مرحباً بعودتك! الرجاء إدخال بياناتك للمتابعة.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">اسم المستخدم</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
+                    <input type="password" id="password" required>
+                </div>
+                <p id="login-error" class="error-message hidden">اسم المستخدم أو كلمة المرور غير صحيحة.</p>
+                <div class="form-actions">
+                    <button type="submit" id="login-button" class="btn-primary">تسجيل الدخول</button>
+                </div>
+            </form>
+            <p class="join-prompt">ليس لديك حساب؟ <a href="#" id="auth-join-link">اطلب الانضمام</a></p>
+        </div>
+    </div>
+    <footer>
+        <p><a href="https://www.linkedin.com/company/wetaan/" target="_blank" rel="noopener noreferrer">Built by Wetaan</a></p>
+    </footer>
+</div>
+
+<!-- MAIN APPLICATION VIEW -->
+<div id="app-view" class="hidden">
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" fill="#0d6efd" />
+                    <path d="M12 2L22 7V17L12 22" fill="#0b5ed7" />
+                    <path d="M12 12.5L22 7L12 2L2 7L12 12.5Z" fill="white" fill-opacity="0.5"/>
+                    <path d="M2 7V17L12 22V12.5L2 7Z" fill="white" fill-opacity="0.2"/>
+                </svg>
+                <h1>VALUATION TECHS</h1>
+            </div>
+            <nav>
+                <a href="#" id="nav-request" class="nav-link">طلب تقييم عقاري</a>
+                <a href="#" id="nav-audit" class="nav-link active">تدقيق التقارير</a>
+                <a href="#" id="nav-verify" class="nav-link">التحقق من البنود</a>
+                <a href="#" id="logout-btn" class="nav-link">تسجيل الخروج</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Page 1: AI Audit Tool -->
+            <div id="page-audit" class="page-container">
+                <div id="upload-container">
+                     <div class="hero-section card">
+                        <p class="card-title">مدقق تقارير التقييم العقاري</p>
+                        <p class="card-subtitle">ارفع ملف PDF واحد أو أكثر .</p>
+                        <div id="drop-zone">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud"><path d="M16 16l-4-4-4 4m0-8v12"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                            <p>اسحب وأفلت ملفات PDF هنا أو <span class="browse-link">انقر للاختيار</span></p>
+                            <input type="file" id="file-input" accept="application/pdf" hidden multiple>
+                        </div>
+                         <p id="file-name" class="file-name-display"></p>
+                        <button id="analyze-button" class="btn-primary" disabled>بدء</button>
+                    </div>
+                </div>
+
+                <div id="loading-container" class="hidden">
+                    <div class="spinner"></div>
+                    <p class="loading-text">جاري التحليل...</p>
+                    <p id="loading-message" class="loading-subtext">هذا قد يستغرق بضع لحظات، شكراً لصبرك.</p>
+                </div>
+
+                <div id="results-container" class="hidden">
+                    <!-- Results will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Page 2: Verify Reports -->
+            <div id="page-verify" class="page-container hidden">
+                <div id="verify-upload-container">
+                    <div class="hero-section card">
+                        <p class="card-title">التحقق من اكتمال بنود التقرير</p>
+                        <p class="card-subtitle">ارفع ملفات PDF لفحصها والتأكد من أنها تحتوي على جميع البنود المهنية والنظامية المطلوبة من هيئة السعودية للمقيمين المعتمدين.</p>
+                        <div id="verify-drop-zone">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud"><path d="M16 16l-4-4-4 4m0-8v12"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                            <p>اسحب وأفلت ملفات PDF هنا أو <span class="browse-link">انقر للاختيار</span></p>
+                            <input type="file" id="verify-file-input" accept="application/pdf" hidden multiple>
+                        </div>
+                        <p id="verify-file-name" class="file-name-display"></p>
+                        <button id="verify-button" class="btn-primary" disabled>بدء</button>
+                    </div>
+                </div>
+
+                <div id="verify-loading-container" class="hidden">
+                    <div class="spinner"></div>
+                    <p class="loading-text">جاري التحقق من البنود...</p>
+                    <p id="verify-loading-message" class="loading-subtext">هذا قد يستغرق بضع لحظات، شكراً لصبرك.</p>
+                </div>
+
+                <div id="verify-results-container" class="hidden">
+                    <!-- Verification results will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Page 4: New Request Form -->
+            <div id="page-request" class="page-container hidden">
+                 <div class="card" style="text-align: center;">
+                    <p class="card-title">طلب تقييم عقاري</p>
+                    <p class="card-subtitle">لطلب تقييم جديد أو تجديد تقييم، يرجى النقر على الزر أدناه لفتح نموذج الطلب.</p>
+                    <button id="open-request-form-btn" type="button" class="btn-primary" style="max-width: 350px; margin: 1.5rem auto 0;">تعبئة النموذج</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p><a href="https://www.linkedin.com/company/wetaan/" target="_blank" rel="noopener noreferrer">Built by Wetaan</a></p>
+    </footer>
+</div>
+
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
